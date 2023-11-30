@@ -14,15 +14,15 @@ const config1 = {
 DataTable(config1);
 
 const config2 = {
-  parent: "#usersTable1",
+  parent: '#productsTable',
   columns: [
-    { title: "Ім’я", value: "name" },
-    { title: "Прізвище", value: "surname" },
-    { title: "Вік", value: "age" },
-    { title: "Примітки", value: "male" },
+    {title: 'Назва', value: 'title'},
+    {title: 'Ціна', value: (product) => `${product.price} ${product.currency}`},
+    {title: 'Колір', value: (product) => getColorLabel(product.color)}, // функцію getColorLabel вам потрібно створити
   ],
-  apiUrl: "https://mock-api.shpp.me/lopa/users",
+  apiUrl: "https://mock-api.shpp.me/imalinovskiy/products"
 };
+
 DataTable(config2);
 
 const users2 = [
