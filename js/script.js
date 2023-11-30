@@ -72,8 +72,8 @@ async function getTableBody(data, config) {
     for (let [keyRow, valueRow] of value) {
       let td = document.createElement("td");
 
-      if (keyRow === "avatar") {
-        td.innerHTML = "<img src=" + valueRow + "></img>";
+      if (keyRow === "avatar" && isImageURL(valueRow)) {
+        td.innerHTML = "<img src=" + valueRow + ' width="30" height="30">';
         fragment.appendChild(td);
       } else {
         td.innerText = valueRow;
@@ -83,7 +83,10 @@ async function getTableBody(data, config) {
     tr.appendChild(fragment);
     tbody.appendChild(tr);
     table.appendChild(tbody);
-  }
+  }  
+}
 
-  
+function isImageURL(url) {  
+  const imageExtensions = /\.(png|jpg|jpeg|gif|bmp)$/i;
+  return imageExtensions.test(url);
 }
