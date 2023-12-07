@@ -1,92 +1,69 @@
-async function DataTable(config) {
-  let divWithTable = document.querySelector(config.parent);
-  let data;
-  try {
-    if (config.hasOwnProperty("apiUrl")) {
-      data = await getDataForTable(config.apiUrl);
-      let headerTable = await getTableHeader(data.data, divWithTable);
-      let bodyTable = await getTableBody(data.data, config);
-    } else {
-      let numberConfig = parseInt(config.split("config")[1]);
-      data = "users" + numberConfig;
-    }
-    return data;
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
+function DataTable(config) {
+  const parentElement = document.querySelector(config.parent);
+
+  // Створюємо таблицю
+  const table = document.createElement("table");
+  const thead = document.createElement("thead");
+  const tbody = document.createElement("tbody");
+
+  // Створюємо рядок заголовків (thead)
+  createTableHeader(config, thead, table);
+  //Створюємо поля таблиці
+  createTableBody(config, tbody, table);
+  // Додаємо таблицю на сторінку
+  parentElement.appendChild(table);
 }
 
-async function getDataForTable(apiUrl) {
-  try {
-    const response = await fetch(apiUrl);
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
-}
-
-async function getTableHeader(data, divWithTable) {
-  let table = document.createElement("table");
-  let thead = document.createElement("thead");
-  let tr = document.createElement("tr");
-  let fragment = document.createDocumentFragment();
-  let keys = Object.keys(data["1"]);
-
-  //create first column head for table
-  let th = document.createElement("th");
-  th.innerText = "№";
-  fragment.appendChild(th);
-  //create all column head for table
-  keys.forEach((key) => {
-    let th = document.createElement("th");
-    th.innerText = key;
-    fragment.appendChild(th);
+function createTableHeader(config, thead, table) {
+  const headerRow = document.createElement("tr");
+  config.columns.forEach((column) => {
+    const th = document.createElement("th");
+    th.innerHTML = column.title;
+    headerRow.appendChild(th);
   });
-
-  tr.appendChild(fragment);
-  thead.appendChild(tr);
+  thead.appendChild(headerRow);
   table.appendChild(thead);
-  divWithTable.appendChild(table);
 }
 
-async function getTableBody(data, config) {
-  data = Object.entries(data);
-  let tbody = document.createElement("tbody");
-  let tr = document.createElement("tr");
-  let table = document.querySelector(`${config.parent} table`);
-  let counter = 1; // Initialize a counter variable
-
-  for (let [key, value] of data) {
-    value = Object.entries(value);
-    let fragment = document.createDocumentFragment();
-    let tr = document.createElement("tr");
-
-    // Create a new cell for numbering
-    let tdNumber = document.createElement("td");
-    tdNumber.innerText = counter++; // Display and increment the counter
-    tr.appendChild(tdNumber);
-
-    for (let [keyRow, valueRow] of value) {
-      let td = document.createElement("td");
-
-      if (keyRow === "avatar" && isImageURL(valueRow)) {
-        td.innerHTML = "<img src=" + valueRow + ' width="30" height="30">';
-        fragment.appendChild(td);
-      } else {
-        td.innerText = valueRow;
-        fragment.appendChild(td);
-      }
-    }
-    tr.appendChild(fragment);
-    tbody.appendChild(tr);
-    table.appendChild(tbody);
-  }  
+function createTableBody(config, tbody, table) {
+  if (config.apiUrl) {
+    // Якщо є apiUrl, отримуємо дані з сервера
+    fetch(config.apiUrl)
+      .then((response) => response.json())
+      .then((data) => {
+        data = Object.entries(data.data);
+        //console.log(data);
+        data.forEach((item) => {
+          const row = document.createElement("tr");
+          config.columns.forEach((column) => {
+            const td = document.createElement("td");
+            if (
+              column.value === "avatar" &&
+              isImageURL(item[1][column.value])
+            ) {
+              td.innerHTML = `<img src="${
+                item[1][column.value]
+              }" width="30" height="30">`;
+            } else if (typeof column.value === "function") {
+              td.innerHTML = column.value(item[1]);
+            } else {
+              td.innerHTML = item[1][column.value];
+            }
+            row.appendChild(td);
+          });
+          tbody.appendChild(row);
+        });
+        table.appendChild(tbody);
+      })
+      .catch((error) => {
+        console.error("Помилка отримання даних з сервера:", error);
+      });
+  }
+  else{
+    //написати якщо урл немає
+  }
 }
-
-function isImageURL(url) {  
+function isImageURL(url) {
   const imageExtensions = /\.(png|jpg|jpeg|gif|bmp)$/i;
   return imageExtensions.test(url);
 }
