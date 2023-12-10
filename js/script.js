@@ -16,6 +16,9 @@ function DataTable(config) {
 
 function createTableHeader(config, thead, table) {
   const headerRow = document.createElement("tr");
+  const th = document.createElement("th");
+  th.innerHTML = "№";
+  headerRow.appendChild(th);
   config.columns.forEach((column) => {
     const th = document.createElement("th");
     th.innerHTML = column.title;
@@ -33,8 +36,15 @@ function createTableBody(config, tbody, table) {
       .then((data) => {
         data = Object.entries(data.data);
         //console.log(data);
+        let count = 1;
         data.forEach((item) => {
           const row = document.createElement("tr");
+
+          //first column with count
+          const td = document.createElement("td");
+          td.innerHTML = count++;
+          row.appendChild(td);
+          //content rows
           config.columns.forEach((column) => {
             const td = document.createElement("td");
             if (
