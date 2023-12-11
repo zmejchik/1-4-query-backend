@@ -20,10 +20,15 @@ function createTableHeader(config, thead, table) {
   th.innerHTML = "№";
   headerRow.appendChild(th);
   config.columns.forEach((column) => {
-    const th = document.createElement("th");
+    let th = document.createElement("th");
     th.innerHTML = column.title;
     headerRow.appendChild(th);
   });
+
+  const actionsTh = document.createElement("th");
+  actionsTh.innerHTML = "Дії";
+  headerRow.appendChild(actionsTh);
+
   thead.appendChild(headerRow);
   table.appendChild(thead);
 }
@@ -31,19 +36,23 @@ function createTableHeader(config, thead, table) {
 function createTableBody(config, tbody, table) {
   if (config.apiUrl) {
     // Якщо є apiUrl, отримуємо дані з сервера
+ 
     fetch(config.apiUrl)
       .then((response) => response.json())
-      .then((data) => {
+      .then((data) => {        
         data = Object.entries(data.data);
-        //console.log(data);
+        
         let count = 1;
-        data.forEach((item) => {
+        data.forEach((item) => {//item - рядок з даними item[0] - id рядка
+          //console.log(item[0]);
+          let idRow = item[0];
           const row = document.createElement("tr");
 
           //first column with count
           const td = document.createElement("td");
           td.innerHTML = count++;
           row.appendChild(td);
+
           //content rows
           config.columns.forEach((column) => {
             const td = document.createElement("td");
@@ -61,6 +70,12 @@ function createTableBody(config, tbody, table) {
             }
             row.appendChild(td);
           });
+
+          //cell with button delete
+          const tdWithBtnDelete = document.createElement("td");
+          tdWithBtnDelete.appendChild(newButton(idRow)); 
+          row.appendChild(tdWithBtnDelete);
+
           tbody.appendChild(row);
         });
         table.appendChild(tbody);
@@ -68,11 +83,28 @@ function createTableBody(config, tbody, table) {
       .catch((error) => {
         console.error("Помилка отримання даних з сервера:", error);
       });
-  }
-  else{
+  } else {
     //написати якщо урл немає
   }
 }
+
+function newButton(id){
+  let button = document.createElement("button");
+  button.innerText = 'Видалити';
+  button.classList.add('delete-button');
+    
+  button.onclick = function() {
+    deleteUser(id);
+  };
+
+  return button;
+}
+
+function deleteUser(id){
+  
+  console.log(`Удаляем строку № ${id}`);
+}
+
 function isImageURL(url) {
   const imageExtensions = /\.(png|jpg|jpeg|gif|bmp)$/i;
   return imageExtensions.test(url);

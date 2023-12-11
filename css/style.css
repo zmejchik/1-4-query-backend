@@ -68,3 +68,21 @@ table tbody tr:nth-child(even){
   @media (max-width: 420px) {
 	.one h1 {font-size: 2em;}
   }
+
+  .delete-button {
+	font-family: 'Comfortaa';
+	font-size: 15px;
+	font-weight: bold;
+	color: #ffffff !important;
+	padding: 15px 25px;
+	border-radius: 5px;
+	border: 2px ridge #f3c846;
+	background: #9e220a;
+	background: linear-gradient(to top, #9e220a, #f66d52);
+  }
+  .delete-button:hover {
+	color: #cccccc !important;
+	background: #f66d52;
+	background: linear-gradient(to top, #f66d52, #9e220a);
+	cursor: pointer;
+  }
