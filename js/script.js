@@ -36,14 +36,15 @@ function createTableHeader(config, thead, table) {
 function createTableBody(config, tbody, table) {
   if (config.apiUrl) {
     // Якщо є apiUrl, отримуємо дані з сервера
- 
+
     fetch(config.apiUrl)
       .then((response) => response.json())
-      .then((data) => {        
+      .then((data) => {
         data = Object.entries(data.data);
-        
+
         let count = 1;
-        data.forEach((item) => {//item - рядок з даними item[0] - id рядка
+        data.forEach((item) => {
+          //item - рядок з даними item[0] - id рядка
           //console.log(item[0]);
           let idRow = item[0];
           const row = document.createElement("tr");
@@ -73,7 +74,7 @@ function createTableBody(config, tbody, table) {
 
           //cell with button delete
           const tdWithBtnDelete = document.createElement("td");
-          tdWithBtnDelete.appendChild(newButton(idRow)); 
+          tdWithBtnDelete.appendChild(newButtonDelete(config, idRow));
           row.appendChild(tdWithBtnDelete);
 
           tbody.appendChild(row);
@@ -88,21 +89,34 @@ function createTableBody(config, tbody, table) {
   }
 }
 
-function newButton(id){
+function newButtonDelete(config, id) {
   let button = document.createElement("button");
-  button.innerText = 'Видалити';
-  button.classList.add('delete-button');
-    
-  button.onclick = function() {
-    deleteUser(id);
+  button.innerText = "Видалити";
+  button.classList.add("delete-button");
+  button.onclick = function () {
+    deleteUser(config.apiUrl, id)
+      .then(() => {
+        refreshTable(config);
+      })
+      .catch(() => {
+        console.log("Error delete row.");
+      });
   };
 
   return button;
 }
 
-function deleteUser(id){
-  
-  console.log(`Удаляем строку № ${id}`);
+function deleteUser(apiUrl, id) {
+  return fetch(`${apiUrl}/${id}`, {
+    method: "DELETE",
+  });
+}
+
+function refreshTable(config) {
+  const parentElement = document.querySelector(config.parent);
+  parentElement.innerHTML = "";
+
+  DataTable(config);
 }
 
 function isImageURL(url) {
