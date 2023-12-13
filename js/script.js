@@ -39,6 +39,7 @@ function createButtonAddRow(config, parentElement, divBeforeTable) {
 }
 
 function addRowInTable(config) {
+  alert('Add function add row');
   console.log(config.apiUrl);
 }
 
