@@ -1,18 +1,30 @@
 function DataTable(config) {
   const parentElement = document.querySelector(config.parent);
+  // Create input search
+  const inputSearch = document.createElement("input");
+  inputSearch.type = "text";
+  inputSearch.placeholder = "Enter text for search";
+  inputSearch.id = `inputSearchIn${config.parent}`;
+  inputSearch.onkeyup = function () {
+    tableSearch(config.parent);
+  };
+  let divBeforeTable = document.createElement("div");
+  divBeforeTable.appendChild(inputSearch);
 
-  // Створюємо таблицю
+  // Create table
   const table = document.createElement("table");
   const thead = document.createElement("thead");
   const tbody = document.createElement("tbody");
 
-  // Створюємо рядок заголовків (thead)
+  // Create table headers row (thead)
   createTableHeader(config, thead, table);
-  //Створюємо поля таблиці
+  // Create table body fields
   createTableBody(config, tbody, table);
-  // Додаємо таблицю на сторінку
+  // Add search input and table to the page
+  parentElement.appendChild(divBeforeTable);
   parentElement.appendChild(table);
 }
+
 
 function createTableHeader(config, thead, table) {
   const headerRow = document.createElement("tr");
@@ -123,3 +135,33 @@ function isImageURL(url) {
   const imageExtensions = /\.(png|jpg|jpeg|gif|bmp)$/i;
   return imageExtensions.test(url);
 }
+
+function tableSearch(parentSelector) {
+  console.log('Parent Selector:', parentSelector);
+  let phrase = document.getElementById(`inputSearchIn${parentSelector}`);
+  let searchText = phrase.value.toLowerCase(); // Convert entered text to lowercase for case-insensitive search
+  console.log('Search Phrase:', searchText);
+  let table = document.querySelector(`${parentSelector} table`);
+
+  for (let i = 1; i < table.rows.length; i++) {
+    let row = table.rows[i];
+    let rowDisplay = false;
+
+    for (let j = 0; j < row.cells.length; j++) {
+      let cellText = row.cells[j].textContent.toLowerCase(); // Get text content from the cell in lowercase
+
+      if (cellText.includes(searchText)) { // Check if the text exists in the cell
+        rowDisplay = true; // If text is found in the cell, display the row
+        break;
+      }
+    }
+
+    if (rowDisplay) {
+      row.style.display = ""; // Display the row
+    } else {
+      row.style.display = "none"; // Hide the row
+    }
+  }
+}
+
+
