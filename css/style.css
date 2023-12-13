@@ -102,15 +102,36 @@ table tbody tr:nth-child(even) {
 	background: linear-gradient(to top, #f66d52, #9e220a);
 	cursor: pointer;
 }
+
+.add-button {
+	width: 30%;
+	height: 42px;
+	font-family: 'Comfortaa';
+	font-size: 15px;
+	font-weight: bold;
+	color: #ffffff !important;
+	padding: 15px 25px;
+	border-radius: 5px;
+	border: 2px ridge #f3c846;
+	background: #9e220a;
+	background: linear-gradient(to top, #9e220a, #f66d52);
+}
+
+.add-button:hover {
+	color: #cccccc !important;
+	background: #f66d52;
+	background: linear-gradient(to top, #f66d52, #9e220a);
+	cursor: pointer;
+}
+
 input {
-  width: 50%;
-  height: 42px;
-  padding-left: 10px;
-  border: 2px solid #7BA7AB;
-  border-radius: 5px;
-  outline: none;
-  background: #F9F0DA;
-  color: #9E9C9C;
-  margin-left: auto;
-  margin-right: auto;
+	width: 30%;
+	height: 42px;
+	padding-left: 10px;
+	border: 2px solid #7BA7AB;
+	border-radius: 5px;
+	outline: none;
+	background: #F9F0DA;
+	color: #9E9C9C;
+	margin-right: auto;
 }

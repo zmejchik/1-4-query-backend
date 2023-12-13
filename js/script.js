@@ -1,6 +1,21 @@
 function DataTable(config) {
   const parentElement = document.querySelector(config.parent);
+  let divBeforeTable = createDivBeforeTable(config);
   // Create input search
+  createInputForSearch(config, parentElement, divBeforeTable);
+  //Create button add new row before table
+  createButtonAddRow(config, parentElement, divBeforeTable);
+  // Create table
+  const table = document.createElement("table");
+  // Create table headers row (thead)
+  createTableHeader(config, table);
+  // Create table body fields
+  createTableBody(config, table);
+  // Add search input and table to the page
+  parentElement.appendChild(table);
+}
+
+function createInputForSearch(config, parentElement, divBeforeTable) {
   const inputSearch = document.createElement("input");
   inputSearch.type = "text";
   inputSearch.placeholder = "Enter text for search";
@@ -8,25 +23,34 @@ function DataTable(config) {
   inputSearch.onkeyup = function () {
     tableSearch(config.parent);
   };
-  let divBeforeTable = document.createElement("div");
   divBeforeTable.appendChild(inputSearch);
-
-  // Create table
-  const table = document.createElement("table");
-  const thead = document.createElement("thead");
-  const tbody = document.createElement("tbody");
-
-  // Create table headers row (thead)
-  createTableHeader(config, thead, table);
-  // Create table body fields
-  createTableBody(config, tbody, table);
-  // Add search input and table to the page
   parentElement.appendChild(divBeforeTable);
-  parentElement.appendChild(table);
 }
 
+function createButtonAddRow(config, parentElement, divBeforeTable) {
+  console.log(divBeforeTable);
+  let button = document.createElement("button");
+  button.innerText = "Додати";
+  button.classList.add("add-button");
+  button.onclick = function () {
+    addRowInTable(config);
+  };
+  divBeforeTable.appendChild(button);
+}
 
-function createTableHeader(config, thead, table) {
+function addRowInTable(config) {
+  console.log(config.apiUrl);
+}
+
+function createDivBeforeTable(config) {
+  let divBeforeTable = document.createElement("div");
+  divBeforeTable.id = `divBeforeTable${config.parent}`;
+  divBeforeTable.style.display = "flex";
+  return divBeforeTable;
+}
+
+function createTableHeader(config, table) {
+  const thead = document.createElement("thead");
   const headerRow = document.createElement("tr");
   const th = document.createElement("th");
   th.innerHTML = "№";
@@ -45,7 +69,8 @@ function createTableHeader(config, thead, table) {
   table.appendChild(thead);
 }
 
-function createTableBody(config, tbody, table) {
+function createTableBody(config, table) {
+  const tbody = document.createElement("tbody");
   if (config.apiUrl) {
     // Якщо є apiUrl, отримуємо дані з сервера
 
@@ -86,7 +111,7 @@ function createTableBody(config, tbody, table) {
 
           //cell with button delete
           const tdWithBtnDelete = document.createElement("td");
-          tdWithBtnDelete.appendChild(newButtonDelete(config, idRow));
+          tdWithBtnDelete.appendChild(createButtonDelete(config, idRow));
           row.appendChild(tdWithBtnDelete);
 
           tbody.appendChild(row);
@@ -101,7 +126,7 @@ function createTableBody(config, tbody, table) {
   }
 }
 
-function newButtonDelete(config, id) {
+function createButtonDelete(config, id) {
   let button = document.createElement("button");
   button.innerText = "Видалити";
   button.classList.add("delete-button");
@@ -127,7 +152,6 @@ function deleteUser(apiUrl, id) {
 function refreshTable(config) {
   const parentElement = document.querySelector(config.parent);
   parentElement.innerHTML = "";
-
   DataTable(config);
 }
 
@@ -137,10 +161,10 @@ function isImageURL(url) {
 }
 
 function tableSearch(parentSelector) {
-  console.log('Parent Selector:', parentSelector);
+  console.log("Parent Selector:", parentSelector);
   let phrase = document.getElementById(`inputSearchIn${parentSelector}`);
   let searchText = phrase.value.toLowerCase(); // Convert entered text to lowercase for case-insensitive search
-  console.log('Search Phrase:', searchText);
+  console.log("Search Phrase:", searchText);
   let table = document.querySelector(`${parentSelector} table`);
 
   for (let i = 1; i < table.rows.length; i++) {
@@ -150,7 +174,8 @@ function tableSearch(parentSelector) {
     for (let j = 0; j < row.cells.length; j++) {
       let cellText = row.cells[j].textContent.toLowerCase(); // Get text content from the cell in lowercase
 
-      if (cellText.includes(searchText)) { // Check if the text exists in the cell
+      if (cellText.includes(searchText)) {
+        // Check if the text exists in the cell
         rowDisplay = true; // If text is found in the cell, display the row
         break;
       }
@@ -163,5 +188,3 @@ function tableSearch(parentSelector) {
     }
   }
 }
-
-
