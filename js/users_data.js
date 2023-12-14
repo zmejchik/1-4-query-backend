@@ -4,7 +4,7 @@ const config1 = {
     { title: "Ім’я", value: "name" },
     { title: "Прізвище", value: "surname" },
     { title: "Аватар", value: "avatar" },
-    { title: "Вік,років", value: (date) => getCurrentAge(`${date.birthday}`) },
+    { title: "Вік, років", value: (date) => getCurrentAge(`${date.birthday}`) },
   ],
   apiUrl: "https://mock-api.shpp.me/imalinovskiy/users",
 };

@@ -81,6 +81,7 @@ function createTableBody(config, table) {
         data = Object.entries(data.data);
 
         let count = 1;
+        createRowWithInputs(config,table,tbody);
         data.forEach((item) => {
           //item - рядок з даними item[0] - id рядка
           //console.log(item[0]);
@@ -125,6 +126,24 @@ function createTableBody(config, table) {
   } else {
     //написати якщо урл немає
   }
+}
+
+function createRowWithInputs(config,table,tbody){
+  let row = document.createElement("tr");
+  const tdEmpty = document.createElement('td');
+  row.appendChild(tdEmpty);
+  config.columns.forEach((column) => {
+    const td = document.createElement("td");
+    let input = document.createElement('input');
+    input.type = 'text'; 
+    input.placeholder = `Enter value`; 
+    input.style.width = "90%";
+    input.style.margin = "auto";
+    td.appendChild(input);
+    row.appendChild(td);
+  });
+  tbody.appendChild(row);
+  table.appendChild(tbody);
 }
 
 function createButtonDelete(config, id) {
