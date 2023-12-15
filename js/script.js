@@ -81,7 +81,7 @@ function createTableBody(config, table) {
         data = Object.entries(data.data);
 
         let count = 1;
-        createRowWithInputs(config,table,tbody);
+        createRowWithInputs(config,table,tbody,data);
         data.forEach((item) => {
           //item - рядок з даними item[0] - id рядка
           //console.log(item[0]);
@@ -128,15 +128,18 @@ function createTableBody(config, table) {
   }
 }
 
-function createRowWithInputs(config,table,tbody){
+function createRowWithInputs(config,table,tbody,data){
+  console.log(data[0][1]);//обьект де будемо брати ключі для інпутів
+  const item = Object.keys(data[0][1]);
   let row = document.createElement("tr");
   const tdEmpty = document.createElement('td');
   row.appendChild(tdEmpty);
-  config.columns.forEach((column) => {
+  item.forEach((key) => {
     const td = document.createElement("td");
     let input = document.createElement('input');
     input.type = 'text'; 
-    input.placeholder = `Enter value`; 
+    input.id = `${key}`;
+    input.placeholder = `Enter ${key}`; 
     input.style.width = "90%";
     input.style.margin = "auto";
     td.appendChild(input);
