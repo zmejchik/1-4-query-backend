@@ -28,7 +28,7 @@ function createInputForSearch(config, parentElement, divBeforeTable) {
 }
 
 function createButtonAddRow(config, parentElement, divBeforeTable) {
-  console.log(divBeforeTable);
+  //console.log(divBeforeTable);
   let button = document.createElement("button");
   button.innerText = "Додати";
   button.classList.add("add-button");
@@ -39,8 +39,24 @@ function createButtonAddRow(config, parentElement, divBeforeTable) {
 }
 
 function addRowInTable(config) {
-  alert('Add function add row');
-  console.log(config.apiUrl);
+  const row = document.getElementById(`rowWithInputs${config.parent}`);
+  row.addEventListener('keyup', (event) => {
+    if (event.code === "Enter") {
+      auditAllFieldOnEmpty(row);
+    }
+  });
+  row.classList.toggle("hidden");
+  return row;
+}
+
+function auditAllFieldOnEmpty(row) {
+  const inputs = row.querySelectorAll('input');
+  const allFieldsFilled = Array.from(inputs).every(input => input.value.trim() !== '');
+  if (allFieldsFilled) {
+    console.log("Запрос на сервер с данними послать и скрить row т е + hidden");    
+  } else {
+    console.log("Вивести что поля не заполнени");    
+  }
 }
 
 function createDivBeforeTable(config) {
@@ -81,7 +97,8 @@ function createTableBody(config, table) {
         data = Object.entries(data.data);
 
         let count = 1;
-        createRowWithInputs(config,table,tbody,data);
+        createRowWithInputs(config, table, tbody, data);
+
         data.forEach((item) => {
           //item - рядок з даними item[0] - id рядка
           //console.log(item[0]);
@@ -128,24 +145,26 @@ function createTableBody(config, table) {
   }
 }
 
-function createRowWithInputs(config,table,tbody,data){
-  console.log(data[0][1]);//обьект де будемо брати ключі для інпутів
+function createRowWithInputs(config, table, tbody, data) {
+  //console.log(data[0][1]); //обьект де будемо брати ключі для інпутів
   const item = Object.keys(data[0][1]);
-  let row = document.createElement("tr");
-  const tdEmpty = document.createElement('td');
-  row.appendChild(tdEmpty);
+  let rowWithInputs = document.createElement("tr");
+  rowWithInputs.id = `rowWithInputs${config.parent}`;
+  const tdEmpty = document.createElement("td");
+  rowWithInputs.appendChild(tdEmpty);
   item.forEach((key) => {
     const td = document.createElement("td");
-    let input = document.createElement('input');
-    input.type = 'text'; 
+    let input = document.createElement("input");
+    input.type = "text";
     input.id = `${key}`;
-    input.placeholder = `Enter ${key}`; 
+    input.placeholder = `Enter ${key}`;
     input.style.width = "90%";
     input.style.margin = "auto";
     td.appendChild(input);
-    row.appendChild(td);
+    rowWithInputs.appendChild(td);
   });
-  tbody.appendChild(row);
+  tbody.appendChild(rowWithInputs);
+  rowWithInputs.classList.add('hidden');
   table.appendChild(tbody);
 }
 
