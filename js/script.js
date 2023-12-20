@@ -40,23 +40,50 @@ function createButtonAddRow(config, parentElement, divBeforeTable) {
 
 function addRowInTable(config) {
   const row = document.getElementById(`rowWithInputs${config.parent}`);
-  row.addEventListener('keyup', (event) => {
+  row.addEventListener("keyup", (event) => {
     if (event.code === "Enter") {
-      auditAllFieldOnEmpty(row);
+      auditAllFieldOnEmpty(row, config);
     }
   });
   row.classList.toggle("hidden");
   return row;
 }
 
-function auditAllFieldOnEmpty(row) {
-  const inputs = row.querySelectorAll('input');
-  const allFieldsFilled = Array.from(inputs).every(input => input.value.trim() !== '');
+function auditAllFieldOnEmpty(row, config) {
+  const inputs = row.querySelectorAll("input");
+  const allFieldsFilled = Array.from(inputs).every(
+    (input) => input.value.trim() !== ""
+  );
   if (allFieldsFilled) {
-    console.log("Запрос на сервер с данними послать и скрить row т е + hidden");    
+    sendDataToServer(inputs, config);
+    refreshTable(config);
+    //console.log("Запрос на сервер с данними послать и скрить row т е + hidden");
   } else {
-    console.log("Вивести что поля не заполнени");    
+    console.log("Вивести что поля не заполнени");
   }
+}
+function sendDataToServer(inputs, config) {
+  let dataForSend = {};
+  //create object for send on server
+  Array.from(inputs).forEach((data) => {
+    if (!isNaN(Number(data.value))) {
+      dataForSend[data.id] = Number(data.value);
+    } else {
+      dataForSend[data.id] = data.value;
+    }
+  });
+  console.log(dataForSend);
+  fetch(config.apiUrl, {
+    method: "POST",
+    body: JSON.stringify(dataForSend),
+    headers: {
+      "Content-type": "application/json; charset=UTF-8",
+    },
+  })
+    .then((response) => response.json())
+    .then((json) => console.log(json));
+
+  console.log(dataForSend);
 }
 
 function createDivBeforeTable(config) {
@@ -155,7 +182,7 @@ function createRowWithInputs(config, table, tbody, data) {
   item.forEach((key) => {
     const td = document.createElement("td");
     let input = document.createElement("input");
-    input.type = "text";
+    //input.type = "text";
     input.id = `${key}`;
     input.placeholder = `Enter ${key}`;
     input.style.width = "90%";
@@ -164,7 +191,7 @@ function createRowWithInputs(config, table, tbody, data) {
     rowWithInputs.appendChild(td);
   });
   tbody.appendChild(rowWithInputs);
-  rowWithInputs.classList.add('hidden');
+  rowWithInputs.classList.add("hidden");
   table.appendChild(tbody);
 }
 
