@@ -42,7 +42,18 @@ function getColorLabel(rgb) {
 } */
 DataTable(config2);
 
-const users2 = [
+
+const config3 = {
+  parent: "#usersTable3",
+  columns: [
+    { title: "Ім’я", value: "name" },
+    { title: "Прізвище", value: "surname" },
+    { title: "Вік", value: "age" },
+    { title: "Примітки", value: "male" },
+  ],
+};
+
+const users3 = [
   { id: 30050, name: "Вася", surname: "Петров", age: 12, male: "Male" },
   { id: 30051, name: "Вася", surname: "Васечкін", age: 15, male: "Male" },
   { id: 30050, name: "Вася", surname: "Петров", age: 18, male: "Male" },
@@ -52,5 +63,5 @@ const users2 = [
   { id: 30051, name: "Лариса", surname: "Косач", age: 25, male: "Female" },
   { id: 30051, name: "Юля", surname: "Мойсик", age: 30, male: "Female" },
 ];
-
+DataTable(config3);
 
