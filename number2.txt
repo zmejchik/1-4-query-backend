@@ -102,3 +102,5 @@ fetch('https://jsonplaceholder.typicode.com/there-is-no-such-route')
     .then(response => response.json())
     .then(json => console.log(json))
 
+----------------------------------------------------------------------
+получить тип даних с сервера и взависимости клеить value

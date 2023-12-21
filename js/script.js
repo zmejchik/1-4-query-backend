@@ -55,8 +55,7 @@ function auditAllFieldOnEmpty(row, config) {
     (input) => input.value.trim() !== ""
   );
   if (allFieldsFilled) {
-    sendDataToServer(inputs, config);
-    refreshTable(config);
+    sendDataToServer(inputs, config);    
     //console.log("Запрос на сервер с данними послать и скрить row т е + hidden");
   } else {
     console.log("Вивести что поля не заполнени");
@@ -66,7 +65,7 @@ function sendDataToServer(inputs, config) {
   let dataForSend = {};
   //create object for send on server
   Array.from(inputs).forEach((data) => {
-    if (!isNaN(Number(data.value))) {
+    if (data.type === "number") {
       dataForSend[data.id] = Number(data.value);
     } else {
       dataForSend[data.id] = data.value;
@@ -81,8 +80,13 @@ function sendDataToServer(inputs, config) {
     },
   })
     .then((response) => response.json())
-    .then((json) => console.log(json));
-
+    .then(() => {
+      refreshTable(config);
+    })
+    .catch(() => {
+      console.log("Error delete row.");
+    });
+    refreshTable(config);
   console.log(dataForSend);
 }
 
@@ -182,8 +186,9 @@ function createRowWithInputs(config, table, tbody, data) {
   item.forEach((key) => {
     const td = document.createElement("td");
     let input = document.createElement("input");
-    //input.type = "text";
+    input.type = typeof data[0][1][key];
     input.id = `${key}`;
+    //console.log(typeof data[0][1][key]);
     input.placeholder = `Enter ${key}`;
     input.style.width = "90%";
     input.style.margin = "auto";
