@@ -35,9 +35,6 @@ function createButtonAddRow(config, parentElement, divBeforeTable) {
   button.onclick = function () {
     addRowInTable(config);
   };
-  if (!config.apiUrl) {
-    button.classList.add("hidden");
-  }
   divBeforeTable.appendChild(button);
 }
 
@@ -124,6 +121,7 @@ function createTableBody(config, table) {
   const tbody = document.createElement("tbody");
   if (config.apiUrl) {
     // Якщо є apiUrl, отримуємо дані з сервера
+
     fetch(config.apiUrl)
       .then((response) => response.json())
       .then((data) => {
@@ -160,6 +158,7 @@ function createTableBody(config, table) {
           const tdWithBtnDelete = document.createElement("td");
           tdWithBtnDelete.appendChild(createButtonDelete(config, idRow));
           row.appendChild(tdWithBtnDelete);
+
           tbody.appendChild(row);
         });
         table.appendChild(tbody);
@@ -168,39 +167,7 @@ function createTableBody(config, table) {
         console.error("Помилка отримання даних з сервера:", error);
       });
   } else {
-    data = Object.entries(users3);
-    console.log(data);
-    let count = 1;
-         data.forEach((item) => {
-          //item - рядок з даними item[0] - id рядка
-          //console.log(item[0]);
-          let idRow = item[0];
-          const row = document.createElement("tr");
-          //first column with count
-          const td = document.createElement("td");
-          td.innerHTML = count++;
-          row.appendChild(td);
-          //content rows
-          config.columns.forEach((column) => {
-            const td = document.createElement("td");
-            if (
-              column.value === "avatar" &&
-              isImageURL(item[1][column.value])
-            ) {
-              td.innerHTML = `<img src="${
-                item[1][column.value]
-              }" width="30" height="30">`;
-            } else if (typeof column.value === "function") {
-              td.innerHTML = column.value(item[1]);
-            } else {
-              td.innerHTML = item[1][column.value];
-            }
-            row.appendChild(td);
-          });
-          
-          tbody.appendChild(row);
-        });
-        table.appendChild(tbody);
+    //написати якщо урл немає
   }
 }
 
