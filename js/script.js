@@ -1,3 +1,10 @@
+/**
+ * The main function to create a table and its control elements.
+ * Finds the parent element in the document and creates markup for the table.
+ * Creates control elements such as a search field and a button to add a new row to the table.
+ * Adds the table and control elements to the page.
+ * @param {Object} config*
+ */
 function DataTable(config) {
   const parentElement = document.querySelector(config.parent);
   let divBeforeTable = createDivBeforeTable(config);
@@ -15,6 +22,14 @@ function DataTable(config) {
   parentElement.appendChild(table);
 }
 
+/**
+ * Function to create a search input field.
+ * Creates an input element with specific attributes and an onkeyup event handler for table search.
+ * Places the input field before the table.
+ * @param {Object} config
+ * @param {HTMLElement} parentElement
+ * @param {HTMLElement} divBeforeTable
+ */
 function createInputForSearch(config, parentElement, divBeforeTable) {
   const inputSearch = document.createElement("input");
   inputSearch.type = "text";
@@ -27,6 +42,14 @@ function createInputForSearch(config, parentElement, divBeforeTable) {
   parentElement.appendChild(divBeforeTable);
 }
 
+/**
+ * Function to create the "Add" button.
+ * Creates a button to add a new row to the table.
+ * Sets an onclick event handler to add a row to the table.
+ * @param {Object} config
+ * @param {HTMLElement} parentElement
+ * @param {HTMLElement} divBeforeTable
+ */
 function createButtonAddRow(config, parentElement, divBeforeTable) {
   //console.log(divBeforeTable);
   let button = document.createElement("button");
@@ -38,6 +61,12 @@ function createButtonAddRow(config, parentElement, divBeforeTable) {
   divBeforeTable.appendChild(button);
 }
 
+/**
+ * Adds a new row to the table and toggles its visibility (hidden or shown).
+ * Sets an event listener for the "Enter" key to check if all fields in the row are filled.
+ * @param {Object} config
+ * @returns row
+ */
 function addRowInTable(config) {
   const row = document.getElementById(`rowWithInputs${config.parent}`);
   row.addEventListener("keyup", (event) => {
@@ -49,6 +78,12 @@ function addRowInTable(config) {
   return row;
 }
 
+/**
+ * Checks whether all fields in a row are filled.
+ * If any field is empty, adds a red border around the empty fields.
+ * @param {HTMLElement} row
+ * @param {Object} config
+ */
 function auditAllFieldOnEmpty(row, config) {
   const inputs = row.querySelectorAll("input");
   const allFieldsFilled = Array.from(inputs).every(
@@ -56,22 +91,35 @@ function auditAllFieldOnEmpty(row, config) {
   );
   if (allFieldsFilled) {
     sendDataToServer(inputs, config);
-    //console.log("Запрос на сервер с данними послать и скрить row т е + hidden");
   } else {
-    console.log("Вивести что поля не заполнени");
+    addRedBorderForEmptyInput(inputs);
   }
 }
-function sendDataToServer(inputs, config) {
-  let dataForSend = {};
-  //create object for send on server
-  Array.from(inputs).forEach((data) => {
-    if (data.type === "number") {
-      dataForSend[data.id] = Number(data.value);
+
+/**
+ * Adds a red border around empty input fields based on their fill status.
+ * @param {HTMLElement} inputs 
+ */
+function addRedBorderForEmptyInput(inputs) {
+  inputs.forEach((input) => {
+    if (input.value === "") {
+      input.style.border = "4px solid red";
     } else {
-      dataForSend[data.id] = data.value;
+      input.style.border = "none";
     }
   });
-  console.log(dataForSend);
+}
+
+/**
+ * Sends data to the server in JSON format.
+ * Uses the fetch API to send data using the POST method.
+ * Updates the table after successfully sending data to the server.
+ * @param {HTMLElement} inputs 
+ * @param {Object} config 
+ */
+function sendDataToServer(inputs, config) {
+  let dataForSend = buildDataForServer(inputs);
+  //console.log(dataForSend);
   fetch(config.apiUrl, {
     method: "POST",
     body: JSON.stringify(dataForSend),
@@ -87,9 +135,33 @@ function sendDataToServer(inputs, config) {
       console.log("Error delete row.");
     });
   refreshTable(config);
-  console.log(dataForSend);
+  //console.log(dataForSend);
 }
 
+/**
+ * Creates an object with data to send to the server.
+ * Converts input field values into a format suitable for sending to the server.
+ * @param {Array} inputs 
+ * @returns Object
+ */
+function buildDataForServer(inputs) {
+  let dataForSend = {};
+  //create object for send on server
+  Array.from(inputs).forEach((data) => {
+    if (data.type === "number") {
+      dataForSend[data.id] = Number(data.value);
+    } else {
+      dataForSend[data.id] = data.value;
+    }
+  });
+  return dataForSend;
+}
+
+/**
+ * Creates a div element before the table to place control elements.
+ * @param {Object} config 
+ * @returns HTMLElement
+ */
 function createDivBeforeTable(config) {
   let divBeforeTable = document.createElement("div");
   divBeforeTable.id = `divBeforeTable${config.parent}`;
@@ -97,6 +169,12 @@ function createDivBeforeTable(config) {
   return divBeforeTable;
 }
 
+/**
+ * Creates the table header (thead) based on the specified columns in the configuration.
+ * Generates column headers for the table based on the provided data.
+ * @param {Object} config 
+ * @param {HTMLElement} table 
+ */
 function createTableHeader(config, table) {
   const thead = document.createElement("thead");
   const headerRow = document.createElement("tr");
@@ -117,11 +195,16 @@ function createTableHeader(config, table) {
   table.appendChild(thead);
 }
 
+/**
+ * Creates the table body (tbody) using data fetched from the server (if apiUrl is provided).
+ * Generates table rows with data and delete buttons for each item.
+ * @param {Object} config 
+ * @param {HTMLTableElement} table 
+ */
 function createTableBody(config, table) {
   const tbody = document.createElement("tbody");
   if (config.apiUrl) {
     // Якщо є apiUrl, отримуємо дані з сервера
-
     fetch(config.apiUrl)
       .then((response) => response.json())
       .then((data) => {
@@ -144,9 +227,8 @@ function createTableBody(config, table) {
               column.value === "avatar" &&
               isImageURL(item[1][column.value])
             ) {
-              td.innerHTML = `<img src="${
-                item[1][column.value]
-              }" width="30" height="30">`;
+              td.innerHTML = `<img src="${item[1][column.value]
+                }" width="30" height="30">`;
             } else if (typeof column.value === "function") {
               td.innerHTML = column.value(item[1]);
             } else {
@@ -171,6 +253,14 @@ function createTableBody(config, table) {
   }
 }
 
+/**
+ * Creates a row with input fields for entering new data into the table.
+ * Generates empty cells and input fields based on the provided data.
+ * @param {Object} config 
+ * @param {HTMLTableElement} table 
+ * @param {HTMLTableSectionElement} tbody 
+ * @param {Array} data 
+ */
 function createRowWithInputs(config, table, tbody, data) {
   //console.log(data[0][1]); //обьект де будемо брати ключі для інпутів
   const item = Object.keys(data[0][1]);
@@ -195,6 +285,14 @@ function createRowWithInputs(config, table, tbody, data) {
   table.appendChild(tbody);
 }
 
+/**
+ * Creates the "Delete" button for a table row. 
+ * Sets an event handler to remove a row from the table 
+ * and sends a request to delete data from the server.
+ * @param {Object} config 
+ * @param {number} id 
+ * @returns HTMLButtonElement
+ */
 function createButtonDelete(config, id) {
   let button = document.createElement("button");
   button.innerText = "Видалити";
@@ -212,36 +310,60 @@ function createButtonDelete(config, id) {
   return button;
 }
 
+/**
+ * Sends a request to the server to delete data 
+ * based on the provided id.
+ * @param {string} apiUrl 
+ * @param {number} id - The ID of the data to be deleted.
+ * @returns {Promise<Response>} - A Promise that resolves to the response from the server.
+ */
 function deleteUser(apiUrl, id) {
   return fetch(`${apiUrl}/${id}`, {
     method: "DELETE",
   });
 }
 
+/**
+ * Refreshes the table by clearing the parent element 
+ * and calling the DataTable function again to recreate 
+ * the table with new data.
+ * @param {Object} config 
+ */
 function refreshTable(config) {
   const parentElement = document.querySelector(config.parent);
   parentElement.innerHTML = "";
   DataTable(config);
 }
 
+/**
+ * Checks whether a URL is an image by comparing the 
+ * file extension with known image extensions.
+ * @param {string} url - The URL to be checked.
+ * @returns {boolean} - Returns true if the URL points to 
+ * an image file, otherwise returns false.
+ */
 function isImageURL(url) {
   const imageExtensions = /\.(png|jpg|jpeg|gif|bmp)$/i;
   return imageExtensions.test(url);
 }
 
+/**
+ * Function to search for text in the table.
+ * Retrieves the entered search text and hides/shows 
+ * table rows based on the presence of the search text in the cells.
+ * @param {string} parentSelector - Selector for the parent element containing the table.
+ */
 function tableSearch(parentSelector) {
   console.log("Parent Selector:", parentSelector);
   let phrase = document.getElementById(`inputSearchIn${parentSelector}`);
-  let searchText = phrase.value.toLowerCase(); // Convert entered text to lowercase for case-insensitive search
+  let searchText = phrase.value.toLowerCase(); 
   console.log("Search Phrase:", searchText);
   let table = document.querySelector(`${parentSelector} table`);
-
   for (let i = 1; i < table.rows.length; i++) {
     let row = table.rows[i];
     let rowDisplay = false;
-
     for (let j = 0; j < row.cells.length; j++) {
-      let cellText = row.cells[j].textContent.toLowerCase(); // Get text content from the cell in lowercase
+      let cellText = row.cells[j].textContent.toLowerCase(); 
 
       if (cellText.includes(searchText)) {
         // Check if the text exists in the cell
@@ -249,7 +371,6 @@ function tableSearch(parentSelector) {
         break;
       }
     }
-
     if (rowDisplay) {
       row.style.display = ""; // Display the row
     } else {
