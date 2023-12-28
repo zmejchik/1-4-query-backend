@@ -98,7 +98,7 @@ function auditAllFieldOnEmpty(row, config) {
 
 /**
  * Adds a red border around empty input fields based on their fill status.
- * @param {HTMLElement} inputs 
+ * @param {HTMLElement} inputs
  */
 function addRedBorderForEmptyInput(inputs) {
   inputs.forEach((input) => {
@@ -114,8 +114,8 @@ function addRedBorderForEmptyInput(inputs) {
  * Sends data to the server in JSON format.
  * Uses the fetch API to send data using the POST method.
  * Updates the table after successfully sending data to the server.
- * @param {HTMLElement} inputs 
- * @param {Object} config 
+ * @param {HTMLElement} inputs
+ * @param {Object} config
  */
 function sendDataToServer(inputs, config) {
   let dataForSend = buildDataForServer(inputs);
@@ -141,7 +141,7 @@ function sendDataToServer(inputs, config) {
 /**
  * Creates an object with data to send to the server.
  * Converts input field values into a format suitable for sending to the server.
- * @param {Array} inputs 
+ * @param {Array} inputs
  * @returns Object
  */
 function buildDataForServer(inputs) {
@@ -159,7 +159,7 @@ function buildDataForServer(inputs) {
 
 /**
  * Creates a div element before the table to place control elements.
- * @param {Object} config 
+ * @param {Object} config
  * @returns HTMLElement
  */
 function createDivBeforeTable(config) {
@@ -172,8 +172,8 @@ function createDivBeforeTable(config) {
 /**
  * Creates the table header (thead) based on the specified columns in the configuration.
  * Generates column headers for the table based on the provided data.
- * @param {Object} config 
- * @param {HTMLElement} table 
+ * @param {Object} config
+ * @param {HTMLElement} table
  */
 function createTableHeader(config, table) {
   const thead = document.createElement("thead");
@@ -198,8 +198,8 @@ function createTableHeader(config, table) {
 /**
  * Creates the table body (tbody) using data fetched from the server (if apiUrl is provided).
  * Generates table rows with data and delete buttons for each item.
- * @param {Object} config 
- * @param {HTMLTableElement} table 
+ * @param {Object} config
+ * @param {HTMLTableElement} table
  */
 function createTableBody(config, table) {
   const tbody = document.createElement("tbody");
@@ -227,8 +227,9 @@ function createTableBody(config, table) {
               column.value === "avatar" &&
               isImageURL(item[1][column.value])
             ) {
-              td.innerHTML = `<img src="${item[1][column.value]
-                }" width="30" height="30">`;
+              td.innerHTML = `<img src="${
+                item[1][column.value]
+              }" width="30" height="30">`;
             } else if (typeof column.value === "function") {
               td.innerHTML = column.value(item[1]);
             } else {
@@ -248,18 +249,16 @@ function createTableBody(config, table) {
       .catch((error) => {
         console.error("Помилка отримання даних з сервера:", error);
       });
-  } else {
-    //написати якщо урл немає
   }
 }
 
 /**
  * Creates a row with input fields for entering new data into the table.
  * Generates empty cells and input fields based on the provided data.
- * @param {Object} config 
- * @param {HTMLTableElement} table 
- * @param {HTMLTableSectionElement} tbody 
- * @param {Array} data 
+ * @param {Object} config
+ * @param {HTMLTableElement} table
+ * @param {HTMLTableSectionElement} tbody
+ * @param {Array} data
  */
 function createRowWithInputs(config, table, tbody, data) {
   //console.log(data[0][1]); //обьект де будемо брати ключі для інпутів
@@ -286,11 +285,11 @@ function createRowWithInputs(config, table, tbody, data) {
 }
 
 /**
- * Creates the "Delete" button for a table row. 
- * Sets an event handler to remove a row from the table 
+ * Creates the "Delete" button for a table row.
+ * Sets an event handler to remove a row from the table
  * and sends a request to delete data from the server.
- * @param {Object} config 
- * @param {number} id 
+ * @param {Object} config
+ * @param {number} id
  * @returns HTMLButtonElement
  */
 function createButtonDelete(config, id) {
@@ -311,9 +310,9 @@ function createButtonDelete(config, id) {
 }
 
 /**
- * Sends a request to the server to delete data 
+ * Sends a request to the server to delete data
  * based on the provided id.
- * @param {string} apiUrl 
+ * @param {string} apiUrl
  * @param {number} id - The ID of the data to be deleted.
  * @returns {Promise<Response>} - A Promise that resolves to the response from the server.
  */
@@ -324,10 +323,10 @@ function deleteUser(apiUrl, id) {
 }
 
 /**
- * Refreshes the table by clearing the parent element 
- * and calling the DataTable function again to recreate 
+ * Refreshes the table by clearing the parent element
+ * and calling the DataTable function again to recreate
  * the table with new data.
- * @param {Object} config 
+ * @param {Object} config
  */
 function refreshTable(config) {
   const parentElement = document.querySelector(config.parent);
@@ -336,10 +335,10 @@ function refreshTable(config) {
 }
 
 /**
- * Checks whether a URL is an image by comparing the 
+ * Checks whether a URL is an image by comparing the
  * file extension with known image extensions.
  * @param {string} url - The URL to be checked.
- * @returns {boolean} - Returns true if the URL points to 
+ * @returns {boolean} - Returns true if the URL points to
  * an image file, otherwise returns false.
  */
 function isImageURL(url) {
@@ -349,21 +348,21 @@ function isImageURL(url) {
 
 /**
  * Function to search for text in the table.
- * Retrieves the entered search text and hides/shows 
+ * Retrieves the entered search text and hides/shows
  * table rows based on the presence of the search text in the cells.
  * @param {string} parentSelector - Selector for the parent element containing the table.
  */
 function tableSearch(parentSelector) {
   console.log("Parent Selector:", parentSelector);
   let phrase = document.getElementById(`inputSearchIn${parentSelector}`);
-  let searchText = phrase.value.toLowerCase(); 
+  let searchText = phrase.value.toLowerCase();
   console.log("Search Phrase:", searchText);
   let table = document.querySelector(`${parentSelector} table`);
   for (let i = 1; i < table.rows.length; i++) {
     let row = table.rows[i];
     let rowDisplay = false;
     for (let j = 0; j < row.cells.length; j++) {
-      let cellText = row.cells[j].textContent.toLowerCase(); 
+      let cellText = row.cells[j].textContent.toLowerCase();
 
       if (cellText.includes(searchText)) {
         // Check if the text exists in the cell

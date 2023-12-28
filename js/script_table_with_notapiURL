@@ -1,0 +1,46 @@
+/**
+ * Function create table from local data
+ * @param config - config table
+ * @param data - users data for table
+ */
+function createTableFromLocalData(config, data) {
+  const parentElement = document.querySelector(config.parent);
+  // Create table elements
+  const table = document.createElement("table");
+  const thead = document.createElement("thead");
+  const tbody = document.createElement("tbody");
+
+  createHeader();
+
+  createBody();
+  // Append the table to the parent element
+  parentElement.appendChild(table);
+  /**
+   * Function to create the table body
+   */
+  function createBody() {
+    data.forEach((item) => {
+      const row = document.createElement("tr");
+      config.columns.forEach((column) => {
+        const td = document.createElement("td");
+        td.textContent = item[column.value];
+        row.appendChild(td);
+      });
+      tbody.appendChild(row);
+    });
+    table.appendChild(tbody);
+  }
+  /**
+   * Function to create the table header
+   */
+  function createHeader() {
+    const headerRow = document.createElement("tr");
+    config.columns.forEach((column) => {
+      const th = document.createElement("th");
+      th.textContent = column.title;
+      headerRow.appendChild(th);
+    });
+    thead.appendChild(headerRow);
+    table.appendChild(thead);
+  }
+}
