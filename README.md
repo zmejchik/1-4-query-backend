@@ -20,8 +20,8 @@ const tableConfig = {
     { title: 'ID', value: 'id' }, // Column title and corresponding field in the data
     { title: 'Name', value: 'name' },
     // Other columns
-  ]
-  apiUrl:'url with data for table'
+  ],
+  apiUrl:'url with data for table',
 };
 
 // Creating the table
