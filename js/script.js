@@ -270,7 +270,12 @@ function createRowWithInputs(config, table, tbody, data) {
   item.forEach((key) => {
     const td = document.createElement("td");
     let input = document.createElement("input");
-    input.type = typeof data[0][1][key];
+    console.log(key);
+    if (key === "color") {
+      input.type = "color";
+    } else {
+      input.type = typeof data[0][1][key];
+    }
     input.id = `${key}`;
     //console.log(typeof data[0][1][key]);
     input.placeholder = `Enter ${key}`;
